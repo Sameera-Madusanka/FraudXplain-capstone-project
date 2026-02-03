@@ -1,0 +1,22 @@
+# Core ML Libraries
+# Note: Install TensorFlow separately based on your system:
+# CPU: pip install tensorflow
+# GPU: pip install tensorflow-gpu
+# Or use: pip install tf-nightly
+
+numpy>=1.21.0
+pandas>=1.3.0
+scikit-learn>=1.0.0
+
+# Visualization
+matplotlib>=3.4.0
+seaborn>=0.11.0
+
+# Utilities
+tqdm>=4.62.0
+
+# Data handling
+imbalanced-learn>=0.8.0
+
+# Explainability (optional - install separately if needed)
+# dice-ml>=0.9
