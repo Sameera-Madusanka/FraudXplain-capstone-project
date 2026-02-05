@@ -1,0 +1,50 @@
+{
+    "protected_attributes": {
+        "description": "Attributes that must NOT be changed in counterfactual explanations to preserve privacy",
+        "attributes": [
+            "income",
+            "customer_age",
+            "housing_status",
+            "employment_status",
+            "zip_code_prefix",
+            "foreign_request"
+        ],
+        "rationale": "These represent sensitive personal information that should not be suggested for modification"
+    },
+    "actionable_attributes": {
+        "description": "Attributes that users can reasonably change and should be used in recourse",
+        "attributes": [
+            "proposed_credit_limit",
+            "credit_risk_score",
+            "payment_type",
+            "device_os",
+            "keep_alive_session",
+            "device_distinct_emails_8w"
+        ],
+        "rationale": "These are controllable factors that users can modify to reduce fraud risk"
+    },
+    "immutable_attributes": {
+        "description": "Attributes that cannot be changed (historical or fixed)",
+        "attributes": [
+            "prev_address_months_count",
+            "current_address_months_count",
+            "bank_months_count",
+            "session_length_in_minutes",
+            "device_fraud_count"
+        ],
+        "rationale": "Historical data that cannot be retroactively changed"
+    },
+    "constraint_rules": {
+        "enforce_protected": true,
+        "enforce_immutable": true,
+        "allow_actionable_only": true,
+        "max_actionable_changes": 3,
+        "require_feasibility_check": true
+    },
+    "privacy_validation": {
+        "check_no_protected_changes": true,
+        "check_no_sensitive_disclosure": true,
+        "log_privacy_metrics": true,
+        "fail_on_violation": true
+    }
+}
