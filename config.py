@@ -29,7 +29,9 @@ TRAINING_CONFIG = {
     'optimizer': 'adam',
     'loss': 'binary_crossentropy',
     'metrics': ['accuracy', 'precision', 'recall', 'auc'],
-    'class_weight': {0: 1, 1: 100},  # Handle imbalanced data
+    # With SMOTE creating 10% fraud, use minimal class weighting
+    # SMOTE already handles the imbalance, so we don't need heavy weights
+    'class_weight': {0: 1, 1: 1},  # Equal weights since SMOTE balances data
     'validation_split': 0.2,
 }
 

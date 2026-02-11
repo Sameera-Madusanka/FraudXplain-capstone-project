@@ -50,9 +50,14 @@ def main(args):
     
     # Load data (use sample for quick testing)
     sample_size = args.sample_size if args.sample_size else None
+    
+    # IMPORTANT: Apply SMOTE here (globally) BEFORE distributing to clients
+    # This ensures all clients train on the same balanced distribution
+    # If SMOTE was applied per-client, each would generate different synthetic samples
+    # causing conflicting patterns that destroy learning during aggregation
     X_train, X_test, y_train, y_test, feature_names = loader.load_and_split(
         sample_size=sample_size,
-        balance_classes=True
+        balance_classes=True  # Apply SMOTE globally
     )
     
     print(f"\n✅ Data loaded successfully!")

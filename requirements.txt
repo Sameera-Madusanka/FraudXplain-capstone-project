@@ -1,22 +1,23 @@
-# Core ML Libraries
-# Note: Install TensorFlow separately based on your system:
-# CPU: pip install tensorflow
-# GPU: pip install tensorflow-gpu
-# Or use: pip install tf-nightly
+# Federated Learning Fraud Detection - Requirements
+# Bank Account Fraud Dataset with Constrained Counterfactual Explanations
 
+# Deep Learning Framework
+tensorflow>=2.16.1,<2.21.0
+
+# Core ML & Data Libraries
 numpy>=1.21.0
 pandas>=1.3.0
 scikit-learn>=1.0.0
+
+# Imbalanced Learning (SMOTE)
+imbalanced-learn>=0.8.0
 
 # Visualization
 matplotlib>=3.4.0
 seaborn>=0.11.0
 
-# Utilities
+# Progress Bars
 tqdm>=4.62.0
 
-# Data handling
-imbalanced-learn>=0.8.0
-
-# Explainability (optional - install separately if needed)
-# dice-ml>=0.9
+# Note: All dependencies are now included
+# Install with: pip install -r requirements.txt

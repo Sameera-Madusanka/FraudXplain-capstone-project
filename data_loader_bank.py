@@ -176,7 +176,9 @@ class BankAccountFraudLoader:
             print(f"\nBalancing classes with SMOTE...")
             print(f"  Before: {np.sum(y_train_processed)} frauds / {len(y_train_processed)} total")
             
-            smote = SMOTE(random_state=self.random_state)
+            # Use sampling_strategy=0.1 for 10% fraud rate (vs 1% original)
+            # This is more realistic than 50-50 balance and reduces false positives
+            smote = SMOTE(random_state=self.random_state, sampling_strategy=0.1)
             X_train_processed, y_train_processed = smote.fit_resample(
                 X_train_processed, y_train_processed
             )
