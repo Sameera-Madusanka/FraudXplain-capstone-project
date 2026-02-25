@@ -51,19 +51,20 @@ def main(args):
     # Load data (use sample for quick testing)
     sample_size = args.sample_size if args.sample_size else None
     
-    # IMPORTANT: Apply SMOTE here (globally) BEFORE distributing to clients
-    # This ensures all clients train on the same balanced distribution
-    # If SMOTE was applied per-client, each would generate different synthetic samples
-    # causing conflicting patterns that destroy learning during aggregation
+    # IMPORTANT: NO SMOTE for federated learning!
+    # SMOTE creates synthetic data that causes aggregation issues
+    # Instead, we use class weights to handle imbalance
+    # This preserves real data patterns during federated aggregation
     X_train, X_test, y_train, y_test, feature_names = loader.load_and_split(
         sample_size=sample_size,
-        balance_classes=True  # Apply SMOTE globally
+        balance_classes=False  # NO SMOTE - use class weights instead
     )
     
     print(f"\n✅ Data loaded successfully!")
     print(f"   Training samples: {len(X_train):,}")
     print(f"   Test samples: {len(X_test):,}")
     print(f"   Features: {len(feature_names)}")
+    print(f"   Fraud rate: {np.mean(y_train)*100:.2f}% (using class weights to handle imbalance)")
     
     # ========================================================================
     # STEP 2: Distribute Data Across Federated Clients

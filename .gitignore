@@ -1,5 +1,15 @@
+#ignore all .csv files
 *.csv
 
+#ignore all .pyc files
 *.pyc
 
+#ignore all .h5 files
 *.h5
+
+#ignore all .md files
+*.md
+
+#but do not ignore thiese specific .md files
+!README.md
+!docs/CONSTRAINED_CF_GUIDE.md
