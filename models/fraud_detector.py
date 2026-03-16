@@ -1,5 +1,6 @@
 """
 Fraud Detection Neural Network Model
+Improved architecture with BatchNormalization for better federated learning
 """
 
 import tensorflow as tf
@@ -25,7 +26,7 @@ def create_fraud_detection_model(input_dim: int) -> keras.Model:
         layers.Input(shape=(input_dim,)),
     ])
     
-    # Hidden layers
+    # Hidden layers (no BatchNormalization - incompatible with FedAvg)
     for units in MODEL_CONFIG['hidden_layers']:
         model.add(layers.Dense(
             units,

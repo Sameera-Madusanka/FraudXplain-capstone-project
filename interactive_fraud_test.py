@@ -229,14 +229,23 @@ def test_transaction(model, transaction, transaction_name="Custom Transaction"):
     
     print_header(f"Testing: {transaction_name}")
     
+    # Load optimal threshold (computed by check_model.py or train_bank_account.py)
+    threshold = 0.5  # default fallback
+    try:
+        with open('results/optimal_threshold.txt', 'r') as f:
+            threshold = float(f.read().strip())
+    except FileNotFoundError:
+        pass
+    
     # Make prediction
     fraud_prob = model.predict(transaction.reshape(1, -1))[0][0]
-    is_fraud = fraud_prob > 0.5
+    is_fraud = fraud_prob > threshold
     
-    print(f"\n🔍 Fraud Detection Result:")
-    print(f"   Prediction: {'🚨 FRAUD' if is_fraud else '✅ LEGITIMATE'}")
+    print(f"\n   Fraud Detection Result:")
+    print(f"   Prediction: {'FRAUD' if is_fraud else 'LEGITIMATE'}")
     print(f"   Fraud Probability: {fraud_prob:.2%}")
-    print(f"   Confidence: {'High' if abs(fraud_prob - 0.5) > 0.3 else 'Medium' if abs(fraud_prob - 0.5) > 0.15 else 'Low'}")
+    print(f"   Threshold: {threshold:.2%}")
+    print(f"   Confidence: {'High' if abs(fraud_prob - threshold) > 0.15 else 'Medium' if abs(fraud_prob - threshold) > 0.05 else 'Low'}")
     
     if is_fraud:
         print("\n" + "-"*80)

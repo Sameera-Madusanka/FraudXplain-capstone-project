@@ -230,9 +230,37 @@ class FederatedBankAccountDistributor:
                 (X[idx], y[idx]) for idx in split_indices
             ]
         
+        elif self.distribution == 'balanced':
+            # Balanced distribution: each client gets equal fraud and legitimate
+            # This is critical for federated learning with imbalanced data
+            fraud_indices = np.where(y == 1)[0]
+            legit_indices = np.where(y == 0)[0]
+            
+            np.random.shuffle(fraud_indices)
+            np.random.shuffle(legit_indices)
+            
+            # Split fraud samples across clients
+            fraud_splits = np.array_split(fraud_indices, self.num_clients)
+            
+            # Each client gets same number of legitimate as fraud samples
+            client_data = []
+            legit_start = 0
+            for i in range(self.num_clients):
+                n_fraud = len(fraud_splits[i])
+                n_legit = n_fraud  # Equal number of legitimate samples
+                
+                legit_end = min(legit_start + n_legit, len(legit_indices))
+                legit_split = legit_indices[legit_start:legit_end]
+                legit_start = legit_end
+                
+                # Combine fraud and legitimate, shuffle
+                combined_idx = np.concatenate([fraud_splits[i], legit_split])
+                np.random.shuffle(combined_idx)
+                
+                client_data.append((X[combined_idx], y[combined_idx]))
+        
         elif self.distribution == 'non-iid':
             # Non-IID: sort by a feature and split
-            # Sort by income (first feature after scaling)
             sorted_indices = np.argsort(X[:, 0])
             split_indices = np.array_split(sorted_indices, self.num_clients)
             

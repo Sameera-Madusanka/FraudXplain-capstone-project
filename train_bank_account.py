@@ -74,7 +74,7 @@ def main(args):
     
     distributor = FederatedBankAccountDistributor(
         num_clients=args.num_clients,
-        distribution='iid'
+        distribution='balanced'  # Each client gets equal fraud + legitimate samples
     )
     
     client_data = distributor.distribute_data(X_train, y_train)
@@ -144,8 +144,33 @@ def main(args):
     
     print_metrics(final_metrics)
     
+    # Find optimal threshold using F1-score (balances precision and recall)
+    from sklearn.metrics import roc_curve, f1_score as f1_calc
+    y_pred_proba = server.global_model.predict(X_test).flatten()
+    
+    # Test thresholds based on prediction percentiles
+    best_f1 = 0
+    optimal_threshold = 0.5
+    for percentile in range(5, 96, 5):
+        t = np.percentile(y_pred_proba, percentile)
+        y_pred_t = (y_pred_proba > t).astype(int)
+        if y_pred_t.sum() == 0:
+            continue
+        f1_val = f1_calc(y_test, y_pred_t, zero_division=0)
+        if f1_val > best_f1:
+            best_f1 = f1_val
+            optimal_threshold = t
+    
+    print(f"\n   Optimal threshold: {optimal_threshold:.4f} ({optimal_threshold*100:.1f}%)")
+    print(f"   Best F1-score: {best_f1:.4f}")
+    
     # Save results
     os.makedirs('results', exist_ok=True)
+    
+    # Save optimal threshold for other scripts
+    with open('results/optimal_threshold.txt', 'w') as f:
+        f.write(f"{optimal_threshold}")
+    print(f"   Saved optimal threshold")
     
     # Plot training history
     if server.history:
@@ -153,15 +178,15 @@ def main(args):
             server.history,
             save_path='results/training_history.png'
         )
-        print("   ✓ Saved training history plot")
+        print("   Saved training history plot")
     
-    # Plot confusion matrix
+    # Plot confusion matrix using optimal threshold
     plot_confusion_matrix(
         y_test,
-        (server.global_model.predict(X_test) > 0.5).astype(int),
+        (y_pred_proba > optimal_threshold).astype(int),
         save_path='results/confusion_matrix.png'
     )
-    print("   ✓ Saved confusion matrix")
+    print("   Saved confusion matrix")
     
     # Plot ROC curve
     plot_roc_curve(

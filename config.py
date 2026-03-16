@@ -21,24 +21,28 @@ MODEL_CONFIG = {
     'dropout_rate': 0.3,
     'activation': 'relu',
     'output_activation': 'sigmoid',
-    'learning_rate': 0.001,
+    'learning_rate': 0.001,  # Standard learning rate
 }
 
 # Training Configuration
 TRAINING_CONFIG = {
     'optimizer': 'adam',
-    'loss': 'binary_crossentropy',
+    'loss': 'binary_crossentropy',  # BCE works best with federated learning
     'metrics': ['accuracy', 'precision', 'recall', 'auc'],
-    # NO SMOTE - use class weights to handle ~1% fraud rate
-    # Weight fraud errors 50x more than legitimate errors
-    # This compensates for the 99:1 imbalance without synthetic data
-    'class_weight': {0: 1, 1: 50},  # 50x weight for fraud class
+    # Focal Loss parameters (available but not used - incompatible with FL)
+    'focal_loss_gamma': 2.0,
+    'focal_loss_alpha': 0.75,
+    # No class weights needed - balanced distribution gives 50:50 per client
+    'class_weight': {0: 1, 1: 1},
     'validation_split': 0.2,
 }
 
 # Privacy Configuration
 PRIVACY_CONFIG = {
-    'use_differential_privacy': True,
+    'use_differential_privacy': False,  # DISABLED - was destroying model weights
+    # When enabled, noise is added to weights EVERY round (noise_multiplier * random)
+    # With 20 rounds x 5 clients = 100 noise injections, model can't learn
+    # Enable ONLY after confirming model works without it
     'noise_multiplier': 0.1,  # Noise scale for differential privacy
     'l2_norm_clip': 1.0,  # Gradient clipping threshold
     'delta': 1e-5,  # Privacy parameter

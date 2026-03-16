@@ -2,8 +2,8 @@
 🔒 PRIVACY-GUARANTEED FRAUD EXPLANATION
 ======================================================================
 
-🚨 Transaction Flagged as LEGITIMATE
-   Fraud Probability: 44.9%
+🚨 Transaction Flagged as FRAUDULENT
+   Fraud Probability: 52.3%
 
 🔒 PRIVACY GUARANTEE:
    The following sensitive attributes are PROTECTED:
@@ -17,17 +17,23 @@
 📋 ACTIONABLE RECOURSE:
    To clear this alert, you can:
 
+   Option 1:
+   ✓ Change credit_risk_score from -1.62 to -0.53
+   ✓ Change payment_type from -0.24 to 0.45
+   ✓ Change phone_mobile_valid from 0.36 to -0.30
+   → Estimated fraud probability: 49.7%
+
    Option 2:
-   ✓ Change phone_mobile_valid from 0.36 to 0.60
-   ✓ Change email_is_free from 0.85 to 1.04
-   ✓ Change proposed_credit_limit from -0.68 to -0.85
-   → Estimated fraud probability: 44.9%
+   ✓ Change phone_mobile_valid from 0.36 to 1.69
+   ✓ Change keep_alive_session from 0.74 to 2.04
+   ✓ Change payment_type from -0.24 to -1.38
+   → Estimated fraud probability: 49.0%
 
    Option 3:
-   ✓ Change has_other_cards from -0.47 to -0.32
-   ✓ Change email_is_free from 0.85 to 0.70
-   ✓ Change payment_type from -0.24 to -0.12
-   → Estimated fraud probability: 44.9%
+   ✓ Change phone_mobile_valid from 0.36 to -1.99
+   ✓ Change payment_type from -0.24 to -2.10
+   ✓ Change has_other_cards from -0.47 to -1.87
+   → Estimated fraud probability: 67.0%
 
 ======================================================================
 ✅ PRIVACY COMPLIANCE:
@@ -42,28 +48,36 @@
 🚨 FRAUD ALERT - ACTIONABLE RECOURSE
 ======================================================================
 
-Transaction flagged as LEGITIMATE
-Fraud Confidence: 44.9%
+Transaction flagged as FRAUDULENT
+Fraud Confidence: 52.3%
 
 📋 TO CLEAR THIS ALERT, YOU CAN:
 
+Option 1 (Alternative):
+  ✓ Improve your credit score to -1 points
+  ✓ Change payment method from "-0.24402590627988213" to "0.4509292448604779"
+  ✓ Decrease phone_mobile_valid from 0.36 to -0.30
+  ✓ Increase session keep-alive setting from 0.74 to 1.22
+  ✓ Use a device with -0.05173048136032529 operating system
+  → Expected fraud probability after changes: 49.7%
+  ✅ This should clear the fraud alert
+
 Option 2 (Alternative):
-  ✓ Increase phone_mobile_valid from 0.36 to 0.60
-  ✓ Increase email_is_free from 0.85 to 1.04
-  ✓ Reduce your credit limit request to $-1
-  ✓ Use a device with 0.539011150225114 operating system
-  ✓ Decrease session_length_in_minutes from -0.77 to -0.89
-  → Expected fraud probability after changes: 44.9%
+  ✓ Increase phone_mobile_valid from 0.36 to 1.69
+  ✓ Increase session keep-alive setting from 0.74 to 2.04
+  ✓ Change payment method from "-0.24402590627988213" to "-1.3757899160310496"
+  ✓ Reduce your credit limit request to $-2
+  ✓ Improve your credit score to -1 points
+  → Expected fraud probability after changes: 49.0%
   ✅ This should clear the fraud alert
 
 Option 3 (Alternative):
-  ✓ Increase has_other_cards from -0.47 to -0.32
-  ✓ Decrease email_is_free from 0.85 to 0.70
-  ✓ Change payment method from "-0.24402590627988213" to "-0.11596804684246184"
-  ✓ Decrease phone_mobile_valid from 0.36 to 0.24
-  ✓ Increase session_length_in_minutes from -0.77 to -0.69
-  → Expected fraud probability after changes: 44.9%
-  ✅ This should clear the fraud alert
+  ✓ Decrease phone_mobile_valid from 0.36 to -1.99
+  ✓ Change payment method from "-0.24402590627988213" to "-2.0995013369678444"
+  ✓ Decrease has_other_cards from -0.47 to -1.87
+  ✓ Improve your credit score to -0 points
+  ✓ Decrease email_is_free from 0.85 to -0.20
+  → Expected fraud probability after changes: 67.0%
 
 💡 ADDITIONAL GUIDANCE:
   • Adjusting your credit limit request can significantly impact fraud risk
