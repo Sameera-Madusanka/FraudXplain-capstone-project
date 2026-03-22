@@ -38,7 +38,7 @@ def main(args):
     # ========================================================================
     # STEP 1: Load and Prepare Data
     # ========================================================================
-    print("📊 STEP 1: Loading Bank Account Fraud Dataset...")
+    print("📊 STEP 1: Loading Data...")
     print("-" * 80)
     
     loader = BankAccountFraudLoader(
@@ -48,36 +48,40 @@ def main(args):
         random_state=42
     )
     
-    # Load data (use sample for quick testing)
-    sample_size = args.sample_size if args.sample_size else None
-    
-    # IMPORTANT: NO SMOTE for federated learning!
-    # SMOTE creates synthetic data that causes aggregation issues
-    # Instead, we use class weights to handle imbalance
-    # This preserves real data patterns during federated aggregation
-    X_train, X_test, y_train, y_test, feature_names = loader.load_and_split(
-        sample_size=sample_size,
-        balance_classes=False  # NO SMOTE - use class weights instead
-    )
-    
-    print(f"\n✅ Data loaded successfully!")
-    print(f"   Training samples: {len(X_train):,}")
-    print(f"   Test samples: {len(X_test):,}")
-    print(f"   Features: {len(feature_names)}")
-    print(f"   Fraud rate: {np.mean(y_train)*100:.2f}% (using class weights to handle imbalance)")
-    
-    # ========================================================================
-    # STEP 2: Distribute Data Across Federated Clients
-    # ========================================================================
-    print(f"\n📡 STEP 2: Distributing Data to {args.num_clients} Federated Clients...")
-    print("-" * 80)
-    
-    distributor = FederatedBankAccountDistributor(
-        num_clients=args.num_clients,
-        distribution='balanced'  # Each client gets equal fraud + legitimate samples
-    )
-    
-    client_data = distributor.distribute_data(X_train, y_train)
+    if args.multi_variant:
+        # Multi-variant mode: each variant = 1 client
+        print("MODE: Multi-Variant (each dataset variant = 1 federated client)")
+        client_data, X_test, y_test, feature_names = loader.load_multi_variant(
+            sample_size=args.sample_size,
+            data_dir='data'
+        )
+        input_dim = client_data[0][0].shape[1]
+        num_clients = len(client_data)
+    else:
+        # Single dataset mode (original behavior)
+        sample_size = args.sample_size if args.sample_size else None
+        X_train, X_test, y_train, y_test, feature_names = loader.load_and_split(
+            sample_size=sample_size,
+            balance_classes=False
+        )
+        
+        print(f"\n✅ Data loaded successfully!")
+        print(f"   Training samples: {len(X_train):,}")
+        print(f"   Test samples: {len(X_test):,}")
+        print(f"   Features: {len(feature_names)}")
+        print(f"   Fraud rate: {np.mean(y_train)*100:.2f}%")
+        
+        # Distribute data across clients
+        print(f"\n📡 STEP 2: Distributing Data to {args.num_clients} Federated Clients...")
+        print("-" * 80)
+        
+        distributor = FederatedBankAccountDistributor(
+            num_clients=args.num_clients,
+            distribution='balanced'
+        )
+        client_data = distributor.distribute_data(X_train, y_train)
+        input_dim = X_train.shape[1]
+        num_clients = args.num_clients
     
     # ========================================================================
     # STEP 3: Initialize Federated Learning
@@ -85,13 +89,8 @@ def main(args):
     print(f"\n🔧 STEP 3: Initializing Federated Learning...")
     print("-" * 80)
     
-    # Create global model and federated server
-    input_dim = X_train.shape[1]
-    
-    # Create federated server (it creates its own global model)
     server = FederatedServer(input_dim=input_dim)
     
-    # Create federated clients
     clients = []
     for i, (X_client, y_client) in enumerate(client_data):
         client = FederatedClient(
@@ -332,6 +331,12 @@ if __name__ == "__main__":
         type=int,
         default=None,
         help='Sample size for quick testing (default: None, use full dataset)'
+    )
+    
+    parser.add_argument(
+        '--multi-variant',
+        action='store_true',
+        help='Use all 6 dataset variants (Base + Variant I-V), each as a separate client'
     )
     
     args = parser.parse_args()

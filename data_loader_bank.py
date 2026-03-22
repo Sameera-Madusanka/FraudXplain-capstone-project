@@ -190,6 +190,126 @@ class BankAccountFraudLoader:
         return (X_train_processed, X_test_processed, 
                 y_train_processed, y_test_processed, 
                 feature_names)
+    
+    def load_multi_variant(self, sample_size: int = None,
+                           data_dir: str = 'data') -> Tuple:
+        """
+        Load all 6 dataset variants for multi-variant federated training.
+        Each variant becomes one federated client's data.
+        
+        Args:
+            sample_size: Optional sample size PER variant (for testing)
+            data_dir: Directory containing CSV files
+            
+        Returns:
+            (client_data_list, X_test, y_test, feature_names)
+            where client_data_list = [(X1, y1), ..., (X6, y6)]
+        """
+        variant_files = [
+            ('Base', f'{data_dir}/Base.csv'),
+            ('Variant I', f'{data_dir}/Variant I.csv'),
+            ('Variant II', f'{data_dir}/Variant II.csv'),
+            ('Variant III', f'{data_dir}/Variant III.csv'),
+            ('Variant IV', f'{data_dir}/Variant IV.csv'),
+            ('Variant V', f'{data_dir}/Variant V.csv'),
+        ]
+        
+        print(f"\n📊 Loading {len(variant_files)} dataset variants...")
+        print("-" * 60)
+        
+        # Load all variants
+        all_dfs = []
+        for name, path in variant_files:
+            if not os.path.exists(path):
+                print(f"  ⚠️ {name} not found at {path}, skipping")
+                continue
+            
+            if sample_size:
+                df = pd.read_csv(path, nrows=sample_size)
+            else:
+                df = pd.read_csv(path)
+            
+            # Drop extra columns (x1, x2 in Variant III and V)
+            extra_cols = [c for c in df.columns 
+                         if c not in self.FEATURE_COLUMNS + [self.TARGET_COLUMN]]
+            if extra_cols:
+                df = df.drop(columns=extra_cols)
+            
+            fraud_rate = df[self.TARGET_COLUMN].mean()
+            print(f"  {name:15s} | {len(df):>10,} samples | "
+                  f"{df[self.TARGET_COLUMN].sum():>6,} fraud ({fraud_rate:.2%})")
+            
+            all_dfs.append((name, df))
+        
+        # Create a combined test set (10% from each variant)
+        test_frames = []
+        train_frames = []
+        
+        for name, df in all_dfs:
+            train_df, test_df = train_test_split(
+                df, test_size=0.1, random_state=self.random_state,
+                stratify=df[self.TARGET_COLUMN]
+            )
+            train_frames.append((name, train_df))
+            test_frames.append(test_df)
+        
+        combined_test = pd.concat(test_frames, ignore_index=True)
+        
+        print(f"\n  Combined test set: {len(combined_test):,} samples "
+              f"({combined_test[self.TARGET_COLUMN].sum():,} fraud)")
+        
+        # Fit scaler on combined training data
+        combined_train_X = pd.concat(
+            [df[self.FEATURE_COLUMNS] for _, df in train_frames],
+            ignore_index=True
+        )
+        combined_train_y = pd.concat(
+            [df[self.TARGET_COLUMN] for _, df in train_frames],
+            ignore_index=True
+        )
+        
+        # Preprocess combined to fit scaler and encoders
+        self.preprocess(combined_train_X, combined_train_y, fit=True)
+        
+        # Process test set
+        X_test, y_test = self.preprocess(
+            combined_test[self.FEATURE_COLUMNS],
+            combined_test[self.TARGET_COLUMN],
+            fit=False
+        )
+        
+        # Process each variant's training data with balanced subsampling
+        client_data = []
+        for name, df in train_frames:
+            X_client, y_client = self.preprocess(
+                df[self.FEATURE_COLUMNS],
+                df[self.TARGET_COLUMN],
+                fit=False
+            )
+            
+            # Balance each client: equal fraud + legitimate samples
+            fraud_idx = np.where(y_client == 1)[0]
+            legit_idx = np.where(y_client == 0)[0]
+            n_fraud = len(fraud_idx)
+            
+            # Subsample legitimate to match fraud count
+            np.random.shuffle(legit_idx)
+            legit_selected = legit_idx[:n_fraud]
+            
+            # Combine and shuffle
+            balanced_idx = np.concatenate([fraud_idx, legit_selected])
+            np.random.shuffle(balanced_idx)
+            
+            X_balanced = X_client[balanced_idx]
+            y_balanced = y_client[balanced_idx]
+            
+            client_data.append((X_balanced, y_balanced))
+            print(f"  Client ({name:15s}): {len(X_balanced):>8,} samples "
+                  f"({n_fraud:,} fraud + {n_fraud:,} legit = 50:50)")
+        
+        print(f"\n✅ {len(client_data)} clients ready for federated training")
+        
+        return client_data, X_test, y_test, self.FEATURE_COLUMNS
 
 
 class FederatedBankAccountDistributor:
