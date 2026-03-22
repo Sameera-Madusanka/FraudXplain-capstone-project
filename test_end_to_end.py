@@ -55,6 +55,15 @@ def test_fraud_detection_system():
     model.load(latest_model)
     print("✅ Model loaded successfully!")
     
+    # Load optimal threshold
+    threshold = 0.5
+    try:
+        with open('results/optimal_threshold.txt', 'r') as f:
+            threshold = float(f.read().strip())
+        print(f"✅ Optimal threshold loaded: {threshold:.4f} ({threshold*100:.1f}%)")
+    except FileNotFoundError:
+        print("⚠️  No optimal threshold found, using default 0.5")
+    
     # ========================================================================
     # STEP 2: Load Test Data
     # ========================================================================
@@ -63,7 +72,7 @@ def test_fraud_detection_system():
     loader = BankAccountFraudLoader(dataset_path='data/Base.csv')
     X_train, X_test, y_train, y_test, feature_names = loader.load_and_split(
         sample_size=10000,
-        balance_classes=True
+        balance_classes=False  # NO SMOTE - test on real data distribution
     )
     
     print(f"✅ Loaded {len(X_test)} test samples")
@@ -89,10 +98,10 @@ def test_fraud_detection_system():
     
     print(f"Transaction ID: {legit_idx}")
     print(f"True Label: LEGITIMATE")
-    print(f"Model Prediction: {'FRAUD' if legit_pred > 0.5 else 'LEGITIMATE'}")
-    print(f"Fraud Probability: {legit_pred:.2%}")
+    print(f"Model Prediction: {'FRAUD' if legit_pred > threshold else 'LEGITIMATE'}")
+    print(f"Fraud Probability: {legit_pred:.2%} (threshold: {threshold:.2%})")
     
-    if legit_pred < 0.5:
+    if legit_pred < threshold:
         print("✅ CORRECT: Transaction approved")
     else:
         print("❌ FALSE POSITIVE: Legitimate transaction flagged as fraud")
@@ -108,10 +117,10 @@ def test_fraud_detection_system():
     
     print(f"Transaction ID: {fraud_idx}")
     print(f"True Label: FRAUD")
-    print(f"Model Prediction: {'FRAUD' if fraud_pred > 0.5 else 'LEGITIMATE'}")
-    print(f"Fraud Probability: {fraud_pred:.2%}")
+    print(f"Model Prediction: {'FRAUD' if fraud_pred > threshold else 'LEGITIMATE'}")
+    print(f"Fraud Probability: {fraud_pred:.2%} (threshold: {threshold:.2%})")
     
-    if fraud_pred > 0.5:
+    if fraud_pred > threshold:
         print("✅ CORRECT: Fraud detected")
     else:
         print("❌ FALSE NEGATIVE: Fraud missed")
@@ -121,7 +130,7 @@ def test_fraud_detection_system():
     # ========================================================================
     print_section("STEP 4: Generating Privacy-Guaranteed Explanation")
     
-    if fraud_pred > 0.5:
+    if fraud_pred > threshold:
         print("\n🔍 Explaining why this transaction was flagged as FRAUD...")
         print("   and how to clear the alert (with privacy protection)\n")
         
@@ -201,7 +210,7 @@ def test_fraud_detection_system():
     
     # Evaluate on all test data
     y_pred_proba = model.predict(X_test).flatten()
-    y_pred = (y_pred_proba > 0.5).astype(int)
+    y_pred = (y_pred_proba > threshold).astype(int)
     
     from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
     

@@ -8,7 +8,7 @@ Federated Learning in Financial Fraud Detection"
 FL_CONFIG = {
     'num_clients': 5,  # Number of simulated financial institutions
     'num_rounds': 20,  # Number of federated learning rounds
-    'local_epochs': 5,  # Local training epochs per round
+    'local_epochs': 10,  # More epochs since balanced distribution gives small client datasets
     'batch_size': 32,
     'client_fraction': 1.0,  # Fraction of clients to use per round
     'min_clients': 3,  # Minimum clients required per round
