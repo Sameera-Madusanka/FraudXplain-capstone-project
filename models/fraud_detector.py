@@ -27,11 +27,15 @@ def create_fraud_detection_model(input_dim: int) -> keras.Model:
     ])
     
     # Hidden layers (no BatchNormalization - incompatible with FedAvg)
+    l2_reg = MODEL_CONFIG.get('l2_reg', 0.0)
+    regularizer = keras.regularizers.l2(l2_reg) if l2_reg > 0 else None
+    
     for units in MODEL_CONFIG['hidden_layers']:
         model.add(layers.Dense(
             units,
             activation=MODEL_CONFIG['activation'],
-            kernel_initializer='he_normal'
+            kernel_initializer='he_normal',
+            kernel_regularizer=regularizer
         ))
         model.add(layers.Dropout(MODEL_CONFIG['dropout_rate']))
     

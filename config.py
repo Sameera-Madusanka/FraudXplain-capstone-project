@@ -7,9 +7,9 @@ Federated Learning in Financial Fraud Detection"
 # Federated Learning Configuration
 FL_CONFIG = {
     'num_clients': 5,  # Number of simulated financial institutions
-    'num_rounds': 20,  # Number of federated learning rounds
+    'num_rounds': 30,  # More rounds for better convergence
     'local_epochs': 10,  # More epochs since balanced distribution gives small client datasets
-    'batch_size': 32,
+    'batch_size': 64,  # Larger batch for more stable gradients
     'client_fraction': 1.0,  # Fraction of clients to use per round
     'min_clients': 3,  # Minimum clients required per round
 }
@@ -17,11 +17,12 @@ FL_CONFIG = {
 # Model Architecture Configuration
 MODEL_CONFIG = {
     'input_dim': 30,  # Will be set based on dataset
-    'hidden_layers': [128, 64, 32],  # Hidden layer sizes
-    'dropout_rate': 0.3,
+    'hidden_layers': [256, 128, 64, 32],  # Deeper network for better separation
+    'dropout_rate': 0.2,  # Reduced dropout (balanced data doesn't need heavy regularization)
     'activation': 'relu',
     'output_activation': 'sigmoid',
-    'learning_rate': 0.001,  # Standard learning rate
+    'learning_rate': 0.0005,  # Lower LR for finer convergence in FL
+    'l2_reg': 0.001,  # L2 regularization to prevent overfitting
 }
 
 # Training Configuration
