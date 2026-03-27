@@ -2,32 +2,38 @@
 🔒 PRIVACY-GUARANTEED FRAUD EXPLANATION
 ======================================================================
 
-🚨 Transaction Flagged as LEGITIMATE
-   Fraud Probability: 43.8%
+🚨 Transaction Flagged as FRAUDULENT
+   Fraud Probability: 79.5%
 
 🔒 PRIVACY GUARANTEE:
    The following sensitive attributes are PROTECTED:
-   • income: -0.88 (unchanged)
-   • customer_age: 0.85 (unchanged)
-   • employment_status: 0.99 (unchanged)
-   • housing_status: -0.60 (unchanged)
-   • date_of_birth_distinct_emails_4w: -0.91 (unchanged)
-   • foreign_request: -0.20 (unchanged)
+   • income: 0.10 (unchanged)
+   • customer_age: 0.84 (unchanged)
+   • employment_status: 1.03 (unchanged)
+   • housing_status: -1.31 (unchanged)
+   • date_of_birth_distinct_emails_4w: -0.29 (unchanged)
+   • foreign_request: -0.16 (unchanged)
 
 📋 ACTIONABLE RECOURSE:
    To clear this alert, you can:
 
+   Option 1:
+   ✓ Change has_other_cards from -0.56 to 0.96
+   ✓ Change proposed_credit_limit from -0.08 to 1.19
+   ✓ Change payment_type from -1.28 to -0.03
+   → Estimated fraud probability: 48.8%
+
    Option 2:
-   ✓ Change payment_type from 0.70 to 0.81
-   ✓ Change phone_mobile_valid from -2.71 to -2.78
-   ✓ Change proposed_credit_limit from -0.74 to -0.67
-   → Estimated fraud probability: 44.6%
+   ✓ Change proposed_credit_limit from -0.08 to -1.86
+   ✓ Change device_os from -1.28 to -0.37
+   ✓ Change email_is_free from 0.95 to 0.07
+   → Estimated fraud probability: 87.3%
 
    Option 3:
-   ✓ Change keep_alive_session from -1.41 to -1.57
-   ✓ Change credit_risk_score from 0.34 to 0.45
-   ✓ Change email_is_free from -1.14 to -1.25
-   → Estimated fraud probability: 41.6%
+   ✓ Change keep_alive_session from -1.14 to -3.12
+   ✓ Change credit_risk_score from 0.28 to 2.14
+   ✓ Change session_length_in_minutes from 2.23 to 0.49
+   → Estimated fraud probability: 87.8%
 
 ======================================================================
 ✅ PRIVACY COMPLIANCE:
@@ -42,28 +48,35 @@
 🚨 FRAUD ALERT - ACTIONABLE RECOURSE
 ======================================================================
 
-Transaction flagged as LEGITIMATE
-Fraud Confidence: 43.8%
+Transaction flagged as FRAUDULENT
+Fraud Confidence: 79.5%
 
 📋 TO CLEAR THIS ALERT, YOU CAN:
 
-Option 2 (Alternative):
-  ✓ Change payment method from "0.6960113572887621" to "0.8134956370381221"
-  ✓ Decrease phone_mobile_valid from -2.71 to -2.78
-  ✓ Request a higher credit limit of $-1
-  ✓ Use a device with 0.2882033248094932 operating system
-  ✓ Decrease phone_home_valid from 1.10 to 1.04
-  → Expected fraud probability after changes: 44.6%
+Option 1 (Alternative):
+  ✓ Increase has_other_cards from -0.56 to 0.96
+  ✓ Request a higher credit limit of $1
+  ✓ Change payment method from "-1.2836033942302734" to "-0.030967401592096197"
+  ✓ Increase session keep-alive setting from -1.14 to -0.16
+  ✓ Use a device with -1.9965666049908326 operating system
+  → Expected fraud probability after changes: 48.8%
   ✅ This should clear the fraud alert
 
+Option 2 (Alternative):
+  ✓ Reduce your credit limit request to $-2
+  ✓ Use a device with -0.3652195463540022 operating system
+  ✓ Decrease email_is_free from 0.95 to 0.07
+  ✓ Increase phone_mobile_valid from 0.39 to 1.16
+  ✓ Improve your credit score to 1 points
+  → Expected fraud probability after changes: 87.3%
+
 Option 3 (Alternative):
-  ✓ Decrease session keep-alive setting from -1.41 to -1.57
-  ✓ Improve your credit score to 0 points
-  ✓ Decrease email_is_free from -1.14 to -1.25
-  ✓ Request a higher credit limit of $-1
-  ✓ Change payment method from "0.6960113572887621" to "0.6392749661486319"
-  → Expected fraud probability after changes: 41.6%
-  ✅ This should clear the fraud alert
+  ✓ Decrease session keep-alive setting from -1.14 to -3.12
+  ✓ Improve your credit score to 2 points
+  ✓ Decrease session_length_in_minutes from 2.23 to 0.49
+  ✓ Decrease has_other_cards from -0.56 to -1.66
+  ✓ Use a device with -2.2146121886200225 operating system
+  → Expected fraud probability after changes: 87.8%
 
 💡 ADDITIONAL GUIDANCE:
   • Adjusting your credit limit request can significantly impact fraud risk

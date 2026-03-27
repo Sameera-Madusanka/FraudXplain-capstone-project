@@ -5,7 +5,7 @@
 *.pyc
 
 #ignore all .h5 files
-*.h5
+#*.h5
 
 #ignore all .md files
 *.md
