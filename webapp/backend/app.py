@@ -12,7 +12,7 @@ import traceback
 
 import numpy as np
 import pandas as pd
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 
 # Add parent directory to path so we can import project modules
@@ -27,7 +27,7 @@ from config import MODEL_CONFIG, FL_CONFIG, TRAINING_CONFIG, PRIVACY_CONFIG
 # ---------------------------------------------------------------------------
 # App setup
 # ---------------------------------------------------------------------------
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 CORS(app)
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -514,6 +514,26 @@ def serve_image(name):
         return jsonify({'error': f'{name} not found'}), 404
 
     return send_file(filepath, mimetype='image/png')
+
+
+# ---------------------------------------------------------------------------
+# React Frontend Catch-All Route (Must be at the bottom to prevent API shadowing)
+# ---------------------------------------------------------------------------
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react(path):
+    # If the request matches a real file (like css or js), serve it.
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    
+    # Otherwise, return the React SPA index.html so react-router can handle it.
+    if os.path.exists(os.path.join(app.static_folder, 'index.html')):
+        return send_from_directory(app.static_folder, 'index.html')
+    else:
+        return jsonify({
+            "status": "online",
+            "message": "FraudXplain API is running seamlessly. Run 'npm run build' and move to static/ to preview frontend locally."
+        })
 
 
 # ---------------------------------------------------------------------------
