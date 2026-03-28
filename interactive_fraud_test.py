@@ -70,30 +70,74 @@ def print_header(text):
 
 
 def get_sample_transactions():
-    """Load real sample transactions from the dataset"""
+    """Load real sample transactions that the model classifies correctly"""
     try:
         from data_loader_bank import BankAccountFraudLoader
+        from models.fraud_detector import FraudDetectionModel
+        import glob
         
-        # Load a small sample from the dataset
+        # Load model and threshold to find samples the model actually flags
+        model_files = glob.glob('results/fraud_model_*.h5')
+        threshold = 0.85
+        try:
+            with open('results/optimal_threshold.txt') as f:
+                threshold = float(f.read().strip())
+        except: pass
+        
+        mdl = None
+        if model_files:
+            mdl = FraudDetectionModel(input_dim=31)
+            mdl.load(max(model_files))
+        
+        # Load a larger sample to find good examples
         loader = BankAccountFraudLoader(dataset_path='data/Base.csv')
         X_train, X_test, y_train, y_test, feature_names = loader.load_and_split(
-            sample_size=1000,
+            sample_size=10000,
             balance_classes=False  # Keep original distribution
         )
         
-        # Find a real legitimate transaction
         legit_indices = np.where(y_test == 0)[0]
         fraud_indices = np.where(y_test == 1)[0]
         
         if len(legit_indices) > 0 and len(fraud_indices) > 0:
+            # Find a fraud sample the model actually predicts as fraud
+            best_fraud_idx = fraud_indices[0]
+            best_fraud_prob = 0
+            
+            if mdl is not None:
+                fraud_X = X_test[fraud_indices]
+                fraud_probs = mdl.predict(fraud_X).flatten()
+                # Find fraud samples above threshold
+                above_threshold = np.where(fraud_probs > threshold)[0]
+                if len(above_threshold) > 0:
+                    # Pick the one with highest fraud probability
+                    best_idx = above_threshold[np.argmax(fraud_probs[above_threshold])]
+                    best_fraud_idx = fraud_indices[best_idx]
+                    best_fraud_prob = fraud_probs[best_idx]
+                    print(f"  Found fraud sample with model score: {best_fraud_prob:.1%}")
+                else:
+                    # No sample above threshold, pick highest scored one
+                    best_idx = np.argmax(fraud_probs)
+                    best_fraud_idx = fraud_indices[best_idx]
+                    best_fraud_prob = fraud_probs[best_idx]
+                    print(f"  Best fraud sample score: {best_fraud_prob:.1%} (below threshold {threshold:.1%})")
+            
+            # Find a legit sample the model predicts as legit (low score)
+            best_legit_idx = legit_indices[0]
+            if mdl is not None:
+                legit_X = X_test[legit_indices[:200]]  # Check first 200
+                legit_probs = mdl.predict(legit_X).flatten()
+                best_legit_local = np.argmin(legit_probs)
+                best_legit_idx = legit_indices[best_legit_local]
+            
             return {
                 'legitimate': {
                     'name': 'Legitimate Transaction (Real Data)',
-                    'values': X_test[legit_indices[0]].tolist()
+                    'values': X_test[best_legit_idx].tolist()
                 },
                 'fraudulent': {
-                    'name': 'Fraudulent Transaction (Real Data)',
-                    'values': X_test[fraud_indices[0]].tolist()
+                    'name': f'Fraudulent Transaction (Real Data, Score: {best_fraud_prob:.1%})',
+                    'values': X_test[best_fraud_idx].tolist()
                 }
             }
     except Exception as e:
