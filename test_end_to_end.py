@@ -87,9 +87,13 @@ def test_fraud_detection_system():
     fraud_indices = np.where(y_test == 1)[0]
     legit_indices = np.where(y_test == 0)[0]
     
-    # Find the legit sample with the lowest fraud probability
+    # Find a diverse legitimate sample the model confidently predicts as legit
     legit_probs = model.predict(X_test[legit_indices[:500]]).flatten()
-    legit_idx = legit_indices[np.argmin(legit_probs)]
+    low_risk_legit_indices = np.where(legit_probs < 0.20)[0]
+    if len(low_risk_legit_indices) > 0:
+        legit_idx = legit_indices[np.random.choice(low_risk_legit_indices)]
+    else:
+        legit_idx = legit_indices[np.argmin(legit_probs)]
     
     # Find fraud samples with high probability to ensure they trigger CFs, then pick a random one!
     fraud_probs = model.predict(X_test[fraud_indices]).flatten()

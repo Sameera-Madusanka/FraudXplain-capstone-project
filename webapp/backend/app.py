@@ -213,9 +213,14 @@ def sample_transactions():
         best_fraud = fraud_idx[best_fraud_local]
         best_prob = fraud_probs[best_fraud_local]
 
-        # Find legit sample with lowest score
+        # Find a diverse legitimate sample the model predicts confidently
         legit_probs = model.predict(X_test[legit_idx[:300]]).flatten()
-        best_legit = legit_idx[np.argmin(legit_probs)]
+        low_risk_legit_indices = np.where(legit_probs < 0.20)[0]
+        if len(low_risk_legit_indices) > 0:
+            best_legit_local = np.random.choice(low_risk_legit_indices)
+        else:
+            best_legit_local = np.argmin(legit_probs)
+        best_legit = legit_idx[best_legit_local]
 
         return jsonify({
             'legitimate': {

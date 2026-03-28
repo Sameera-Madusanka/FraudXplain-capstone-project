@@ -32,6 +32,22 @@ export default function About() {
         <p>Project overview, challenges encountered, and research references</p>
       </div>
 
+      {/* About The Research Project */}
+      <div className="card" style={{ marginBottom: 20 }}>
+        <div className="card-header"><h3>About This Project</h3></div>
+        <div style={{ fontSize: '0.95rem', lineHeight: 1.8 }}>
+          <p>
+            This web application presents the implementation of the final year research project titled <strong>“Developing a Privacy-Preserving Explainability Framework for Generating Actionable Counterfactual Explanations in Federated Financial Fraud Detection.”</strong>
+          </p>
+          <p style={{ marginTop: 12 }}>
+            The project focuses on addressing critical challenges in financial AI, particularly data privacy, model transparency, and trust. It demonstrates how Federated Learning can be combined with Explainable AI techniques to enable collaborative fraud detection without sharing sensitive data, while also providing meaningful and privacy-preserving explanations for model decisions.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            Developed by <strong>Sameera Madusanka (w1871882)</strong> as part of the BSc (Hons) in Computer Science degree at the Informatics Institute of Technology (IIT), affiliated with the University of Westminster, UK, this application serves as a prototype to showcase the system’s core functionalities, experimental outcomes, and practical relevance in real-world financial environments.
+          </p>
+        </div>
+      </div>
+
       {/* Overview */}
       <div className="card" style={{ marginBottom: 20 }}>
         <div className="card-header"><h3>Project Overview</h3></div>

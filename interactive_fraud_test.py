@@ -122,12 +122,16 @@ def get_sample_transactions():
                     best_fraud_prob = fraud_probs[best_idx]
                     print(f"  Best fraud sample score: {best_fraud_prob:.1%} (below threshold {threshold:.1%})")
             
-            # Find a legit sample the model predicts as legit (low score)
+            # Find a diverse legitimate sample the model confidently predicts as legit
             best_legit_idx = legit_indices[0]
             if mdl is not None:
                 legit_X = X_test[legit_indices[:200]]  # Check first 200
                 legit_probs = mdl.predict(legit_X).flatten()
-                best_legit_local = np.argmin(legit_probs)
+                low_risk_legit_indices = np.where(legit_probs < 0.20)[0]
+                if len(low_risk_legit_indices) > 0:
+                    best_legit_local = np.random.choice(low_risk_legit_indices)
+                else:
+                    best_legit_local = np.argmin(legit_probs)
                 best_legit_idx = legit_indices[best_legit_local]
             
             return {
