@@ -525,8 +525,9 @@ if __name__ == '__main__':
     print("=" * 60)
 
     if load_model():
-        print("\n🚀 Starting server on http://localhost:5000")
-        app.run(host='0.0.0.0', port=5000, debug=True)
+        port = int(os.environ.get('PORT', 5000))
+        print(f"\n🚀 Starting server on port {port}")
+        app.run(host='0.0.0.0', port=port)
     else:
         print("\n❌ Cannot start without a trained model.")
         print("   Run: python train_bank_account.py --multi-variant --rounds 30")

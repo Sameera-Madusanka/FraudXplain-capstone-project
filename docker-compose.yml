@@ -7,9 +7,6 @@ services:
       dockerfile: webapp/backend/Dockerfile
     ports:
       - "5000:5000"
-    volumes:
-      - ./results:/app/results
-      - ./data:/app/data
     environment:
       - TF_ENABLE_ONEDNN_OPTS=0
     restart: unless-stopped
