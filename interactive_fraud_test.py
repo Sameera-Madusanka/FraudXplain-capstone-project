@@ -110,11 +110,11 @@ def get_sample_transactions():
                 # Find fraud samples above threshold
                 above_threshold = np.where(fraud_probs > threshold)[0]
                 if len(above_threshold) > 0:
-                    # Pick the one with highest fraud probability
-                    best_idx = above_threshold[np.argmax(fraud_probs[above_threshold])]
+                    # Pick a random sample from the high-probability ones to increase diversity
+                    best_idx = np.random.choice(above_threshold)
                     best_fraud_idx = fraud_indices[best_idx]
                     best_fraud_prob = fraud_probs[best_idx]
-                    print(f"  Found fraud sample with model score: {best_fraud_prob:.1%}")
+                    print(f"  Found diverse fraud sample with model score: {best_fraud_prob:.1%}")
                 else:
                     # No sample above threshold, pick highest scored one
                     best_idx = np.argmax(fraud_probs)
@@ -312,13 +312,9 @@ def test_transaction(model, transaction, transaction_name="Custom Transaction"):
                 num_counterfactuals=3
             )
             
-            # Generate explanation
-            explanation = cf_generator.generate_privacy_guaranteed_explanation(
-                instance=transaction,
-                counterfactuals=counterfactuals
-            )
-            
-            print(explanation)
+            # We skip printing the raw explanation string here because the 
+            # ActionableRecourseGenerator below provides a much cleaner,
+            # user-friendly, and actionable version of the same data!
             
             # Validate privacy
             print("\n" + "-"*80)

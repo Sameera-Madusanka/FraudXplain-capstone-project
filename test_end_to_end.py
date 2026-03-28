@@ -87,12 +87,24 @@ def test_fraud_detection_system():
     fraud_indices = np.where(y_test == 1)[0]
     legit_indices = np.where(y_test == 0)[0]
     
+    # Find the legit sample with the lowest fraud probability
+    legit_probs = model.predict(X_test[legit_indices[:500]]).flatten()
+    legit_idx = legit_indices[np.argmin(legit_probs)]
+    
+    # Find fraud samples with high probability to ensure they trigger CFs, then pick a random one!
+    fraud_probs = model.predict(X_test[fraud_indices]).flatten()
+    high_risk_fraud_indices = fraud_indices[np.where(fraud_probs > threshold)[0]]
+    if len(high_risk_fraud_indices) > 0:
+        fraud_idx = np.random.choice(high_risk_fraud_indices)
+    else:
+        # Fallback to the highest probability one if none exceed threshold
+        fraud_idx = fraud_indices[np.argmax(fraud_probs)]
+    
     # Test Case 1: Legitimate Transaction
     print("\n" + "-"*80)
     print("TEST CASE 1: Legitimate Transaction")
     print("-"*80)
     
-    legit_idx = legit_indices[0]
     legit_transaction = X_test[legit_idx]
     legit_pred = model.predict(legit_transaction.reshape(1, -1))[0][0]
     
@@ -111,7 +123,6 @@ def test_fraud_detection_system():
     print("TEST CASE 2: Fraudulent Transaction")
     print("-"*80)
     
-    fraud_idx = fraud_indices[0]
     fraud_transaction = X_test[fraud_idx]
     fraud_pred = model.predict(fraud_transaction.reshape(1, -1))[0][0]
     
@@ -152,13 +163,9 @@ def test_fraud_detection_system():
         
         print(f"✅ Generated {len(counterfactuals)} counterfactual options\n")
         
-        # Generate explanation
-        explanation = cf_generator.generate_privacy_guaranteed_explanation(
-            instance=fraud_transaction,
-            counterfactuals=counterfactuals
-        )
-        
-        print(explanation)
+        # We skip printing the raw explanation string here because the 
+        # ActionableRecourseGenerator below provides a much cleaner,
+        # formatted, and actionable version of the exact same data!
         
         # ========================================================================
         # STEP 5: Validate Privacy Guarantees

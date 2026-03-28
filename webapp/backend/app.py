@@ -203,9 +203,13 @@ def sample_transactions():
         fraud_idx = np.where(y_test == 1)[0]
         legit_idx = np.where(y_test == 0)[0]
 
-        # Find fraud sample the model actually scores highest
+        # Find a diverse fraud sample the model actually flags as fraud
         fraud_probs = model.predict(X_test[fraud_idx]).flatten()
-        best_fraud_local = np.argmax(fraud_probs)
+        above_threshold = np.where(fraud_probs > 0.85)[0]
+        if len(above_threshold) > 0:
+            best_fraud_local = np.random.choice(above_threshold)
+        else:
+            best_fraud_local = np.argmax(fraud_probs)
         best_fraud = fraud_idx[best_fraud_local]
         best_prob = fraud_probs[best_fraud_local]
 

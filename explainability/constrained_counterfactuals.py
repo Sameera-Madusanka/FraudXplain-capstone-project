@@ -106,6 +106,8 @@ class ConstrainedCounterfactualGenerator:
         
         counterfactuals = []
         
+        import tensorflow as tf
+        
         # Generate multiple diverse counterfactuals
         for i in range(num_counterfactuals):
             # Start with copy of original
@@ -118,27 +120,45 @@ class ConstrainedCounterfactualGenerator:
                 for idx in self.actionable_indices:
                     cf_instance[idx] += noise[idx]
             
-            # Optimize only actionable features
+            # Optimize only actionable features using Gradient Descent
             for iteration in range(max_iterations):
-                current_pred = self.model.predict(cf_instance.reshape(1, -1))[0][0]
+                # Convert to tensor to compute gradients
+                x_tensor = tf.convert_to_tensor(cf_instance.reshape(1, -1), dtype=tf.float32)
+                
+                with tf.GradientTape() as tape:
+                    tape.watch(x_tensor)
+                    # Access the underlying keras model from FraudDetectionModel wrapper
+                    pred = self.model.model(x_tensor)
+                
+                current_pred = float(pred[0][0])
                 current_class = 1 if current_pred > 0.5 else 0
                 
-                # Check if target reached
+                # Check if target reached (probability successfully lowered)
                 if current_class == target_class:
                     break
                 
-                # Gradient-based update (simplified)
-                # In practice, use proper gradient computation
-                perturbation = np.random.randn(len(cf_instance)) * learning_rate
+                # Calculate gradients of the output prediction with respect to input features
+                grads = tape.gradient(pred, x_tensor).numpy()[0]
                 
-                # CRITICAL: Zero out changes to protected and immutable attributes
-                for idx in self.protected_indices + self.immutable_indices:
-                    perturbation[idx] = 0
+                # Apply Fast Gradient Sign Method (FGSM) style update
+                perturbation = np.zeros_like(cf_instance)
+                
+                for idx in self.actionable_indices:
+                    # Move exactly in opposite direction of gradient to minimize probability
+                    if abs(grads[idx]) > 1e-6:
+                        direction = np.sign(grads[idx])
+                    else:
+                        direction = np.random.choice([-1.0, 1.0])
+                    
+                    # Add tiny decaying noise to escape local minima
+                    noise_factor = (np.random.randn() * 0.05) * (0.95 ** iteration)
+                    
+                    perturbation[idx] = -(learning_rate * direction) + noise_factor
                 
                 # Apply perturbation
                 cf_instance += perturbation
                 
-                # Ensure protected attributes remain unchanged
+                # CRITICAL: Re-enforce zero changes to protected and immutable attributes
                 for idx in self.protected_indices + self.immutable_indices:
                     cf_instance[idx] = instance[idx]
             
