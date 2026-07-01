@@ -44,8 +44,8 @@ body {
 #root { min-height: 100vh; display: flex; flex-direction: column; }
 
 /* ─── Layout ─── */
-.app-container { display: flex; min-height: 100vh; }
-.main-content { flex: 1; padding: 32px; margin-left: 260px; }
+.app-container { display: flex; min-height: 100vh; overflow-x: hidden; }
+.main-content { flex: 1; padding: 32px; margin-left: 260px; overflow-x: hidden; min-width: 0; }
 
 /* ─── Sidebar Navigation ─── */
 .sidebar {
@@ -124,6 +124,9 @@ body {
   border-radius: var(--radius);
   padding: 24px;
   transition: var(--transition);
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 .card:hover { border-color: rgba(99,102,241,0.3); }
 .card-header {
@@ -298,11 +301,14 @@ tr:hover td { background: var(--bg-card-hover); }
 
 /* ─── Upload ─── */
 .upload-zone {
+  display: block;
   border: 2px dashed var(--border);
   border-radius: var(--radius);
   padding: 40px; text-align: center;
   cursor: pointer;
   transition: var(--transition);
+  box-sizing: border-box;
+  width: 100%;
 }
 .upload-zone:hover { border-color: var(--accent); background: var(--accent-glow); }
 .upload-zone input[type="file"] { display: none; }
