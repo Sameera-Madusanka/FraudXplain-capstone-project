@@ -117,7 +117,7 @@ export default function Explainability() {
       {result && !result.error && (
         <>
           {/* Detection Result */}
-          <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 20, marginBottom: 20 }}>
+          <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 20, marginBottom: 20 }}>
             <div className="card">
               <div className="gauge-container">
                 <div className="gauge-ring" style={{ background: gaugeGrad }}>

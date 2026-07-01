@@ -128,21 +128,21 @@ def load_model():
 
     model_files = glob.glob(os.path.join(RESULTS_DIR, 'fraud_model_*.h5'))
     if not model_files:
-        print("⚠️  No trained model found in results/")
+        print("No trained model found in results/")
         return False
 
     latest = max(model_files)
     print(f"Loading model: {latest}")
     model = FraudDetectionModel(input_dim=31)
     model.load(latest)
-    print("✅ Model loaded")
+    print("Model loaded")
 
     # Load threshold
     threshold_file = os.path.join(RESULTS_DIR, 'optimal_threshold.txt')
     if os.path.exists(threshold_file):
         with open(threshold_file) as f:
             threshold = float(f.read().strip())
-        print(f"✅ Threshold: {threshold:.4f}")
+        print(f"Threshold: {threshold:.4f}")
 
     # Initialize explainability components
     try:
@@ -155,9 +155,9 @@ def load_model():
             feature_names=FEATURE_NAMES
         )
         recourse_generator = ActionableRecourseGenerator(feature_names=FEATURE_NAMES)
-        print("✅ Explainability components loaded")
+        print("Explainability components loaded")
     except Exception as e:
-        print(f"⚠️  Explainability init error: {e}")
+        print(f"Explainability init error: {e}")
 
     return True
 

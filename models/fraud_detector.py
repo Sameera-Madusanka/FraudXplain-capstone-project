@@ -1,6 +1,10 @@
 """
 Fraud Detection Neural Network Model
-Improved architecture with BatchNormalization for better federated learning
+Improved architecture with deep layers and L2 regularization for better federated learning separation.
+
+References:
+- Jesus et al. (2022) — "Turning the Tables: Biased, Imbalanced, Dynamic Datasets" (NeurIPS)
+- Zhao et al. (2018) — "Federated Learning with Non-IID Data"
 """
 
 import tensorflow as tf

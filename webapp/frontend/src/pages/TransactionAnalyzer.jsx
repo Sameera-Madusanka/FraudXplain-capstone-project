@@ -70,7 +70,7 @@ export default function TransactionAnalyzer() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 20 }}>
+      <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 20 }}>
         {/* Feature Input */}
         <div className="card">
           <div className="card-header"><h3>Transaction Features ({features.length})</h3></div>

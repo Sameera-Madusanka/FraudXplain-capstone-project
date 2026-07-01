@@ -1,6 +1,11 @@
 """
 Federated Learning Client
-Represents a financial institution training locally on private data
+Represents a financial institution training locally on private data.
+
+References:
+- McMahan et al. (2017) — "Communication-Efficient Learning from Decentralized Data" (FedAvg)
+- Wei et al. (2020) — "Federated Learning with Differential Privacy" (IEEE TIFS)
+- Abadi et al. (2016) — "Deep Learning with Differential Privacy" (CCS)
 """
 
 import numpy as np

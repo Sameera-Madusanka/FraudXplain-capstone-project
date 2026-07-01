@@ -1,6 +1,10 @@
 """
 Actionable Recourse Generator
-Generates user-friendly, actionable explanations from constrained counterfactuals
+Generates user-friendly, actionable explanations from constrained counterfactuals.
+
+References:
+- Wachter, Mittelstadt, & Russell (2017) — "Counterfactual Explanations without Opening the Black Box"
+- Karimi et al. (2020) — "Algorithmic Recourse: from Counterfactual Explanations to Interventions" (ACM FAccT)
 """
 
 import numpy as np

@@ -319,12 +319,92 @@ tr:hover td { background: var(--bg-card-hover); }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ─── Responsive ─── */
+/* ─── Hamburger Toggle Button ─── */
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 200;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.sidebar-toggle:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+
+/* ─── Sidebar Overlay (mobile) ─── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 90;
+  backdrop-filter: blur(2px);
+}
+
+/* ─── Responsive — Tablet (769–1024px) ─── */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .sidebar { width: 200px; }
+  .main-content { margin-left: 200px; padding: 20px; }
+}
+
+/* ─── Responsive — Mobile (≤768px) ─── */
 @media (max-width: 768px) {
-  .sidebar { width: 60px; }
-  .sidebar-logo h1, .sidebar-logo span, .sidebar-nav a span, .sidebar-footer { display: none; }
-  .sidebar-nav a { justify-content: center; padding: 14px; }
-  .main-content { margin-left: 60px; padding: 16px; }
+  /* Show toggle button */
+  .sidebar-toggle { display: flex; }
+
+  /* Sidebar slides in as a drawer */
+  .sidebar {
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform 0.28s ease;
+    z-index: 100;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  /* Show overlay when sidebar is open */
+  .sidebar-overlay.open { display: block; }
+
+  /* Main content takes full width */
+  .main-content {
+    margin-left: 0;
+    padding: 16px;
+    padding-top: 64px; /* space for the toggle button */
+  }
+
+  /* Show all sidebar text on mobile drawer */
+  .sidebar-logo h1, .sidebar-logo span, .sidebar-nav a span, .sidebar-footer { display: block; }
+
+  /* Metric grid 2 columns on mobile */
   .metric-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Single column feature inputs */
   .feature-grid { grid-template-columns: 1fr; }
+
+  /* Card grids go single column */
+  .card-grid { grid-template-columns: 1fr !important; }
+
+  /* Fix hard-coded inline grids via CSS classes */
+  .two-col-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ─── Responsive — Small mobile (≤480px) ─── */
+@media (max-width: 480px) {
+  .metric-grid { grid-template-columns: 1fr 1fr; }
+  .page-header h2 { font-size: 1.3rem; }
+  .metric-card .metric-value { font-size: 1.5rem; }
+  .btn-group { flex-direction: column; }
+  .btn-group .btn { width: 100%; justify-content: center; }
+  .gauge-ring { width: 140px; height: 140px; }
+  .gauge-value { font-size: 1.6rem; }
+  table { font-size: 0.78rem; }
+  th, td { padding: 7px 8px; }
 }

@@ -1,6 +1,10 @@
 """
 Constrained Counterfactual Explanations
-Generates privacy-preserving counterfactuals that protect sensitive attributes
+Generates privacy-preserving counterfactuals that protect sensitive attributes.
+
+References:
+- Wachter, Mittelstadt, & Russell (2017) — "Counterfactual Explanations without Opening the Black Box"
+- Goodfellow et al. (2014) — "Explaining and Harnessing Adversarial Examples" (FGSM methodology context)
 """
 
 import numpy as np
